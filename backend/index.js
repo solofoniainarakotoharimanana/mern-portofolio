@@ -2,6 +2,9 @@ import express from "express";
 import { connectDB } from "./db/connectDB.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js"
+import cors from "cors";
+
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -11,7 +14,12 @@ const PORT = process.env.PORT || 5000;
 
 //4707131df23554bff87838f074e00a03 ==> Token Mailtrap
 
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 app.use(express.json());//ALLOWS US TO PARSE INCOING REQUEST WITH JSON PAYLOADS(GET DATA JSON FROM FORM)
+app.use(cookieParser());//ALLOWS TO PARSE THE INCOMING COOKIES
 
 app.use("/api/auth", authRoutes);
 

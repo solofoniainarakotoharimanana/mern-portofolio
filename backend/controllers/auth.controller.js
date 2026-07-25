@@ -9,6 +9,9 @@ export const signup = async (req, res) => {
     try {
         const { username, name, email, password } = req.body;
         let { role } = req.body;
+
+        console.log(username, name, email, password, role)
+
          const query = {
             $or: [
                 { email },
@@ -55,14 +58,17 @@ export const signup = async (req, res) => {
 
         //JWT GENERATE TOKEN
         generateTokenAndSetCookie(res, newUser._id);
-        const { password: pass, ...rest } = newUser._doc;
+        // const { password: pass, ...rest } = newUser._doc;
         //SEND EMAIL
         sendEmail("solofoniainarakotoharimanana@gmail.com", "verificationToken", verificationToken, '', "");
 
         return res.status(201).json({
             success: true,
             message: "User Created successfully",
-            user: rest
+            user: {
+                ...newUser._doc,
+                password: undefined
+            }
         })
 
     } catch (error) {
@@ -95,11 +101,14 @@ export const login = async (req, res) => {
 
         await user.save();
 
-        const { password: pass, ...rest } = user;
+        // const { password: pass, ...rest } = user;
         res.status(200).json({
             success: true,
             message: "Logged in successfully",
-            user: rest
+            user: {
+                ...user._doc,
+                password: undefined
+            }
         });
 
     } catch (error) {
@@ -143,7 +152,7 @@ export const verifyEmail = async (req, res) => {
         await user.save();  
         //SEND EMAIL
         sendEmail("solofoniainarakotoharimanana@gmail.com", "verifyEmail", '', user.username, "");
-        const { password: pass, ...rest } = user._doc;
+        const { password: pass, ...rest } = user;
         return res.status(200).json({
             success: true,
             message: "Email verified successfully.",
@@ -233,5 +242,28 @@ export const resetPassword = async (req, res) => {
             success: false,
             message: error.message
         });
+    }
+}
+
+export const checkAuth = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select('-password');
+
+        if (!user) {
+            res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: true,
+            message: error.message
+        })
     }
 }
