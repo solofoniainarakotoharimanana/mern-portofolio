@@ -7,10 +7,8 @@ import crypto from "crypto";
 
 export const signup = async (req, res) => {
     try {
-        const { username, name, email, password } = req.body;
+        const { username, name, email, password, categories } = req.body;
         let { role } = req.body;
-
-        console.log(username, name, email, password, role)
 
          const query = {
             $or: [
@@ -49,6 +47,7 @@ export const signup = async (req, res) => {
             name,
             email, 
             role,
+            categoriesWorked: categories,
             password: hashedPassword,
             verificationToken,
             verificationTokenExpiredAt: Date.now() + 24 * 60 * 60 * 1000//24h
@@ -60,7 +59,8 @@ export const signup = async (req, res) => {
         generateTokenAndSetCookie(res, newUser._id);
         // const { password: pass, ...rest } = newUser._doc;
         //SEND EMAIL
-        sendEmail("solofoniainarakotoharimanana@gmail.com", "verificationToken", verificationToken, '', "");
+        sendEmail("1formartic@gmail.com", "verificationToken", verificationToken, '', "");
+        // sendEmail("solofoniainarakotoharimanana@gmail.com", "verificationToken", verificationToken, '', "");
 
         return res.status(201).json({
             success: true,
@@ -149,14 +149,19 @@ export const verifyEmail = async (req, res) => {
         user.verificationToken = undefined
         user.verificationTokenExpiredAt = undefined
 
-        await user.save();  
+        await user.save();
+        
         //SEND EMAIL
-        sendEmail("solofoniainarakotoharimanana@gmail.com", "verifyEmail", '', user.username, "");
+        sendEmail("1formartic@gmail.com", "verifyEmail", '', user.username, "");
+        // sendEmail("solofoniainarakotoharimanana@gmail.com", "verifyEmail", '', user.username, "");
         const { password: pass, ...rest } = user;
         return res.status(200).json({
             success: true,
             message: "Email verified successfully.",
-            user: rest
+            user: {
+                ...user._doc,
+                password: undefined
+            }
         })
 
     } catch (error) {
@@ -247,23 +252,14 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
-        const user = await User.findById(req.userId).select('-password');
+		const user = await User.findById(req.userId).select("-password");
+		if (!user) {
+			return res.status(400).json({ success: false, message: "User not found" });
+		}
 
-        if (!user) {
-            res.status(400).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-
-        res.status(200).json({
-            success: true,
-            user
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: true,
-            message: error.message
-        })
-    }
+		res.status(200).json({ success: true, user });
+	} catch (error) {
+		console.log("Error in checkAuth ", error);
+		res.status(400).json({ success: false, message: error.message });
+	}
 }

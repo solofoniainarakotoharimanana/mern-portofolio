@@ -55,6 +55,13 @@ const userSchema = mongoose.Schema({
             ref: "Project",
         },
     ],
+    categoriesWorked: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            default: []
+        },
+    ],
     lastLogin: {
         type: Date,
         default: Date.now

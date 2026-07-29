@@ -2,6 +2,8 @@ import express from "express";
 import { connectDB } from "./db/connectDB.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js"
+import projectRoutes from "./routes/projectRoute.js"
+import categoryRoutes from "./routes/categoryRoutes.js"
 import cors from "cors";
 
 import cookieParser from "cookie-parser";
@@ -22,6 +24,8 @@ app.use(express.json());//ALLOWS US TO PARSE INCOING REQUEST WITH JSON PAYLOADS(
 app.use(cookieParser());//ALLOWS TO PARSE THE INCOMING COOKIES
 
 app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.listen(PORT, () => {
     connectDB();
