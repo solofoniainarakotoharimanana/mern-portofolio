@@ -83,6 +83,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
+        console.log("TEST ICI .....")
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -100,6 +101,8 @@ export const login = async (req, res) => {
         user.lastLogin = new Date();
 
         await user.save();
+
+        
 
         // const { password: pass, ...rest } = user;
         res.status(200).json({

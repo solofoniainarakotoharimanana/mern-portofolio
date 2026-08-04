@@ -40,20 +40,54 @@ export const createProject = async (req, res) => {
 
 }
 export const fetchProjectsOfUsers = async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    // const page = parseInt(req.query.page) || 1;
+    // const limit = parseInt(req.query.limit) || 10;
+    // const skip = (page - 1) * limit;
 
     try {
-        const projects = await Project.find().skip(skip).limit(limit);
-        const total = await Project.countDocuments();
+        // const projects = await Project.find().skip(skip).limit(limit).populate('category');
+        // const total = await Project.countDocuments();
+        const projects = await Project.find({ owner: req.user._id }).sort({createdAt: -1}).populate('category');
         
         res.json({
             projects,
-            totalPages: Math.ceil(total / limit),
-            currentPage: page
+            // pagetotalPages: Math.ceil(total / limit),
+            // currentPage: 
         });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
+
+export const fetchProjectById = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const project = await Project.findById(projectId).populate({
+            path: "owner",
+            select: "name username email"
+        }).populate({
+            path: "category",
+            select: "name"
+        });
+
+        if (!project) {
+            return res.status(400).json({
+                success: false,
+                message: "Project not found"
+            })
+        }
+
+        return res.status(200).json({
+                success: false,
+                message: "fetching project successfully",
+                project
+            })
+
+    } catch (error) {
+         return res.status(500).json({
+                message: error.message
+            })
+    }
+}
+
+

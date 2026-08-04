@@ -3,63 +3,132 @@ import moment from "moment"
 import { motion } from "framer-motion"
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { useCategoryStore } from "../../store/categoryStore.js"
+import { Eye, Plus, Send } from 'lucide-react';
+import Modal from "../../pages/modal/Modal.jsx"
+import { useCallback } from 'react';
 
-const UserProjectList = ({ projects, totalPages, fetchProjectsOfUser }) => {
-    // console.log("MY PROJECTS >>> ", projects)
-    const [page, setPage] = useState(1);
+import ReactPaginate from 'react-paginate';
+
+const UserProjectList = ({
+    project,
+    projects,
+    // totalPages,
+    fetchProjectsOfUser,
+    fetchProjectById
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const { categories, fetchCategories } = useCategoryStore()
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [projectId, setProjectId] = useState(0)
+    const [catToFilter, setCatToFilter] = useState('');
+
+    const [projectList, setProjectList] = useState([]);
+
+    //FILTER PROJECTS BY CATEGORY
+    const filterByCategory = projects?.filter((p) => {
+        if (catToFilter == "" || catToFilter == "all") {
+            return projects;
+        }
+        else {
+            return p.category.name.toLocaleLowerCase() === catToFilter.toLocaleLowerCase()
+        }
+
+    })
+
+    const handleClose = useCallback(() => setIsOpen(false), []);
+
+    const handleOpen = (id) => {
+        setIsOpen(true);
+        setProjectId(id)
+        fetchProjectById(id)
+    }
+
     useEffect(() => {
-        fetchProjectsOfUser(page, 1)
-    }, [page])
+        fetchCategories();
+        fetchProjectsOfUser();
 
+
+    }, []);
+
+    useEffect(() => {
+        if (projects) {
+            setProjectList(projects);
+        }
+    }, [projects])
+
+    // console.log("FILTERED PROJECTS >>> ", filterByCategory)
     return (
         <div className='mb-8'>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className='container mx-auto px-4 py-8 bg-gray-700 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-md shadow-lg'>
-                <h1 className='text-white text-center text-4xl tracking-widest mb-5'>MY PROJECTS</h1>
-                <div className='grid lg:grid-cols-3 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 sm:place-items-center gap-4 '>
-                    {projects && projects.map((p) => {
-                        return <div
-                            key={p._id}
-                            className="max-w-sm rounded overflow-hidden border-1 border-amber-50 shadow-xl">
-                            {/* <img className="w-full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
-                            <div className="">
-                                <div
-                                    className="font-bold text-2xl py-4 mb-2 text-center bg-purple-600 text-white
-                                 ">{p.title}</div>
-                                <div className='flex flex-col mb-4'>
-                                    <p className='text-md font-md px-4 text-white'>Description:</p>
-                                    <p className="text-gray-200 text-sm font-thin px-4">
-                                        {p.description}
-                                    </p>
-                                </div>
-                                <div className='flex flex-col mb-4'>
-                                    <p className='text-md font-md px-4 text-white'>Created at:</p>
-                                    <p className="text-gray-200 text-sm font-thin px-4">
-                                        {/* {moment(p.createAt).fromNow()} */}
-                                        {moment(p.createAt).format('MMMM Do YYYY, h:mm:ss a')}
-                                    </p>
-                                </div>
-
-                            </div>
-                            <div className="px-6 pt-4 pb-2">
-                                <button className='inline-block
-                            bg-gray-200 rounded-full px-3 py-1 cursor-pointer hover:bg-gray-300
-                            text-sm font-semibold text-gray-700
-                             mr-2 mb-2'>See all</button>
-                            </div>
+                className=''>
+                <h1 className='text-white text-center text-4xl tracking-widest mb-5'>My Projects</h1>
+                <div className='flex space-x-5'>
+                    <div className='mt-4 mb-8 align-center'>
+                        <button
+                            onClick={() => setCatToFilter('all')}
+                            className="group relative overflow-hidden rounded-md bg-pink-400 px-6 py-3 font-semibold text-white hover:text-purple-600 cursor-pointer transition-all duration-300">
+                            <span className="absolute inset-0 w-full h-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                            <span className="relative z-10">ALL</span>
+                        </button>
+                    </div>
+                    {categories && categories.map((c) => {
+                        return <div className='mt-4 mb-8 align-center' key={c._id}>
+                            <button
+                                onClick={() => setCatToFilter(c.name)}
+                                className="group relative overflow-hidden rounded-md bg-pink-400 px-6 py-3 font-semibold text-white hover:text-purple-600 cursor-pointer transition-all duration-300">
+                                <span className="absolute inset-0 w-full h-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
+                                <span className="relative z-10">{c.name}</span>
+                            </button>
                         </div>
                     })}
                 </div>
-                {/* PAGINATION */}
-                <button disabled={page <= 1} onClick={() => setPage(page - 1)}>Précédent</button>
-                <span>Page {page} sur {totalPages}</span>
-                <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Suivant</button>
+                {filterByCategory && filterByCategory.map((p) => {
+                    return <div
+                        key={p._id}
+                        className='w-full pb-4 border-b border-b-amber-50 flex space-x-6 pt-4 mb-4'>
+                        <div className='w-24 h-26 rounded-md overflow-hidden flex flex-col shadow-lg'>
+                            <div className='bg-white text-center py-2'>
+                                <span className='text-xl font-bold text-blue-900'>25</span>
+                            </div>
+                            <div className='w-full text-center pt-2 bg-blue-700 text-white pb-2 basis-64'>
+                                <p className='text-md font-semibold'>Mar</p>
+                                <p className='text-xs font-light'>2026</p>
+                            </div>
+                        </div>
+                        <div className='flex flex-col basis-2xl'>
+                            <h3 className='text-lg text-cyan-300 font-semibold'>{p.title}</h3>
+                            <p className='text-sm text-blue-50 tracking-widest'>{p.description} ...</p>
+                        </div>
+                        <div className='flex ml-auto space-x-3'>
+                            <span className="inline-flex items-center rounded-md bg-blue-400/10 px-2 py-1 text-xs text-blue-400 inset-ring inset-ring-blue-400/30 h-8 uppercase font-bold">{p.status}</span>
+                            <Eye
+                                onClick={() => handleOpen(p._id)}
+                                size={24} className='text-white 
+                                        cursor-pointer font-bold' data-tooltip-target="detail-tooltip" />
+
+
+                            <Send size={24} className='text-blue-500 cursor-pointer font-bold' />
+
+                        </div>
+                    </div>
+                })}
+
+
             </motion.div>
 
-
+            <Modal
+                title="Project detail"
+                data={project}
+                dataType="project_detail"
+                isOpen={isOpen}
+                onClose={handleClose}>
+                <h1>Modal is opening</h1>
+            </Modal>
         </div>
     )
 }
