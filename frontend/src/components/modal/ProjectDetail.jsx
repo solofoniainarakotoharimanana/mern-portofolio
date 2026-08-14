@@ -7,7 +7,6 @@ const ProjectDetail = ({ project }) => {
     const [status, setStatus] = useState("")
     const [projectDetail, setProjectdetail] = useState(null)
     const [createdAt, setCreatedAt] = useState(null);
-    const [isShowrelatedCompany, setIsShowrelatedCompany] = useState(false);
 
     useEffect(() => {
         if (project) {
@@ -19,7 +18,7 @@ const ProjectDetail = ({ project }) => {
 
     }, [project])
 
-    console.log("PROJECT DETAIL >>> ", projectDetail)
+    // console.log("PROJECT DETAIL >>> ", createdAt)
 
     const getStatus = (statusProject) => {
         switch (statusProject) {

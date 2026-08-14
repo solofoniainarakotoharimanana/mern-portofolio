@@ -12,7 +12,6 @@ export const useCategoryStore = create(
             try {
                 set({isLoadingCategories: true})
                 const response = await axios.get(`${API_URL}/`);
-                console.log("CATEGORIES >> ", response)
                 set({ categories: response.data.categories, isLoadingCategories: false })
                 
                 return response.data.categories;

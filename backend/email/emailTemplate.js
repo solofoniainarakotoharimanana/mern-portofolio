@@ -80,3 +80,17 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
     <p>This is an automated message, please do not reply to this email.</p>
   </div>
 `;
+
+export const ACCEPTED_REQUEST_TEMPLATE = `
+  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Welcome {username}</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello,</p>
+    <p>Your request has been accepted</p>
+    <p>Best regards,<br>Your App Team</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>This is an automated message, please do not reply to this email.</p>
+  </div>
+`;

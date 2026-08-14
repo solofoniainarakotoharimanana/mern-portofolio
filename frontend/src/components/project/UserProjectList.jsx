@@ -8,16 +8,27 @@ import { Eye, Plus, Send } from 'lucide-react';
 import Modal from "../../pages/modal/Modal.jsx"
 import { useCallback } from 'react';
 
+import { formatDate } from "../../utils/date.js"
+
+import { useRequestStore } from "../../store/requestStore.js"
+
 import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
 
 const UserProjectList = ({
     project,
     projects,
     // totalPages,
     fetchProjectsOfUser,
-    fetchProjectById
+    fetchProjectById,
+    setIsNewRequest,
+    setProjectIdToRequest,
+    setUserComponent
 }) => {
+    const { fetchRequestByProject } = useRequestStore();
+
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const { categories, fetchCategories } = useCategoryStore()
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -58,7 +69,12 @@ const UserProjectList = ({
         }
     }, [projects])
 
-    // console.log("FILTERED PROJECTS >>> ", filterByCategory)
+    const handleClickRequestBtn = (projectId) => {
+        setUserComponent("newRequest")
+        setProjectIdToRequest(projectId)
+        setIsNewRequest(true)
+    }
+
     return (
         <div className='mb-8'>
             <motion.div
@@ -93,11 +109,11 @@ const UserProjectList = ({
                         className='w-full pb-4 border-b border-b-amber-50 flex space-x-6 pt-4 mb-4'>
                         <div className='w-24 h-26 rounded-md overflow-hidden flex flex-col shadow-lg'>
                             <div className='bg-white text-center py-2'>
-                                <span className='text-xl font-bold text-blue-900'>25</span>
+                                <span className='text-xl font-bold text-blue-900'>{formatDate(p.createdAt).split(" ")[1].replace(",", "")}</span>
                             </div>
                             <div className='w-full text-center pt-2 bg-blue-700 text-white pb-2 basis-64'>
-                                <p className='text-md font-semibold'>Mar</p>
-                                <p className='text-xs font-light'>2026</p>
+                                <p className='text-md font-semibold'>{formatDate(p.createdAt).split(" ")[0]}</p>
+                                <p className='text-xs font-light'>{formatDate(p.createdAt).split(",")[1]}</p>
                             </div>
                         </div>
                         <div className='flex flex-col basis-2xl'>
@@ -109,18 +125,20 @@ const UserProjectList = ({
                             <Eye
                                 onClick={() => handleOpen(p._id)}
                                 size={24} className='text-white 
-                                        cursor-pointer font-bold' data-tooltip-target="detail-tooltip" />
+                                        cursor-pointer font-bold' />
+                            {
+                                ((!p.request && p.status === "created") || p.status === "inprogressed" || p.status === "finished") &&
+                                <Send
+                                    onClick={() => handleClickRequestBtn(p._id)}
+                                    size={24}
+                                    className='text-blue-500 cursor-pointer font-bold' />
+                            }
 
-
-                            <Send size={24} className='text-blue-500 cursor-pointer font-bold' />
 
                         </div>
                     </div>
                 })}
-
-
             </motion.div>
-
             <Modal
                 title="Project detail"
                 data={project}

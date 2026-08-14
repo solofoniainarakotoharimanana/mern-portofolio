@@ -2,10 +2,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import ProjectDetail from '../../components/modal/ProjectDetail';
+import CompanyList from '../../components/company/CompanyList';
 
-function Modal({ isOpen, children, onClose, dataType, data, title }) {
-    console.log(dataType, data)
-    const [typeData, setTypeData] = useState();
+function Modal({ isOpen, children, onClose, dataType, data, title, setIdCompanyToRequest }) {
+
+    const [typeData, setTypeData] = useState('');
     useEffect(() => {
         setTypeData(dataType)
     }, []);
@@ -42,6 +43,9 @@ function Modal({ isOpen, children, onClose, dataType, data, title }) {
             {/* START CONTENT */}
             <div className='p-6'>
                 {typeData === "project_detail" && <ProjectDetail project={data} />}
+                {typeData === "company_list" && <CompanyList
+                    setIdCompanyToRequest={setIdCompanyToRequest}
+                    companies={data} />}
             </div>
             {/* END CONTENT */}
         </div>

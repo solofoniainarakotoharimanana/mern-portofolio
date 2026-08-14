@@ -4,13 +4,16 @@ import {
     VERIFICATION_EMAIL_TEMPLATE,
     WELCOME_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
-    PASSWORD_RESET_SUCCESS_TEMPLATE
+    PASSWORD_RESET_SUCCESS_TEMPLATE,
+    ACCEPTED_REQUEST_TEMPLATE
 } from "./emailTemplate.js";
 import dotenv from "dotenv"
 
 
 dotenv.config();
 export const sendEmail = (emailTo, type, verificationToken = '', username = '', resetPassword = '') => {
+    console.log("USR >>> ", username);
+    
     let subject = "";
     let templateEmail = "";
     // FOR REAL GMAIL
@@ -64,6 +67,10 @@ export const sendEmail = (emailTo, type, verificationToken = '', username = '', 
     else if(type === "resetSuccessEmail") {        
         templateEmail = PASSWORD_RESET_SUCCESS_TEMPLATE;
         subject = "Reset success password";
+    }
+    else if(type === "acceptRequest") {        
+        templateEmail = ACCEPTED_REQUEST_TEMPLATE.replace('{username}', username);
+        subject = "Accept request";
     }
 
     let mail = MailGenerator.generate(response);

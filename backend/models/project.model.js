@@ -29,6 +29,10 @@ const projectSchema = mongoose.Schema({
 		ref: "Category",
 		required: true
 	},
+	request: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "request",
+	},
     likes: [
 		{
 			type: mongoose.Schema.Types.ObjectId,

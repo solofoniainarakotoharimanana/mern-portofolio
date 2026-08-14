@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js"
 import projectRoutes from "./routes/projectRoute.js"
 import categoryRoutes from "./routes/categoryRoutes.js"
+import requestRoutes from "./routes/requestRoutes.js"
+import companyRoutes from "./routes/companyRoutes.js"
 import cors from "cors";
 
 import cookieParser from "cookie-parser";
@@ -26,6 +28,8 @@ app.use(cookieParser());//ALLOWS TO PARSE THE INCOMING COOKIES
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/companies", companyRoutes);
 
 app.listen(PORT, () => {
     connectDB();

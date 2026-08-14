@@ -83,7 +83,6 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
-        console.log("TEST ICI .....")
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -205,7 +204,7 @@ export const forgotPassword = async (req, res) => {
         })
 
     } catch (error) {
-        console.log("ERROR >>> ", error.message);
+        // console.log("ERROR >>> ", error.message);
         res.status(500).json({
             success: false,
             message: error.message

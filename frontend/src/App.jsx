@@ -15,6 +15,8 @@ import LoadingSpinner from './components/LoadingSpinner.jsx'
 import CompanyHomePage from './pages/home/CompanyHomePage.jsx'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx'
+// import NewRequest from './pages/request/NewRequest.jsx'
+import { useState } from 'react'
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -28,14 +30,12 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to='/verify-email' replace />;
   }
 
-  console.log(isAuthenticated, user)
   return children;
 };
 
 // redirect authenticated users to the home page
 const RedirectAuthenticatedUser = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
-  console.log("ROLE USER >>> ", user)
   if (isAuthenticated && user.isVerified) {
     if (user.role === "user") return <Navigate to='/' replace />;
     if (user.role === "company") return <Navigate to='/company' replace />;
@@ -48,6 +48,8 @@ const RedirectAuthenticatedUser = ({ children }) => {
 
 function App() {
   const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const [userComponent, setUserComponent] = useState("project")
+  const [projectIdToRequest, setProjectIdToRequest] = useState('');
 
   useEffect(() => {
     checkAuth();
@@ -62,7 +64,13 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={<ProtectedRoute><UserPage /></ProtectedRoute>}>
+            element={<ProtectedRoute>
+              <UserPage
+                projectIdToRequest={projectIdToRequest}
+                setProjectIdToRequest={setProjectIdToRequest}
+                userComponent={userComponent}
+                setUserComponent={setUserComponent} />
+            </ProtectedRoute>}>
           </Route>
           <Route path='/company' element={<ProtectedRoute>
             <CompanyHomePage /></ProtectedRoute>}>
