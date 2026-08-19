@@ -12,7 +12,6 @@ import dotenv from "dotenv"
 
 dotenv.config();
 export const sendEmail = (emailTo, type, verificationToken = '', username = '', resetPassword = '') => {
-    console.log("USR >>> ", username);
     
     let subject = "";
     let templateEmail = "";

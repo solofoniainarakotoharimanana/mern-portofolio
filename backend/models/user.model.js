@@ -55,6 +55,18 @@ const userSchema = mongoose.Schema({
             ref: "Project",
         },
     ],
+    likedRequest: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Request",
+        },
+    ],
+    interessedrequest: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Request",
+        },
+    ],
     categoriesWorked: [
         {
             type: mongoose.Schema.Types.ObjectId,

@@ -100,7 +100,6 @@ export const login = async (req, res) => {
         user.lastLogin = new Date();
 
         await user.save();
-
         
 
         // const { password: pass, ...rest } = user;

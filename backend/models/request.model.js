@@ -23,6 +23,18 @@ const requestSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    likes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user",
+        },
+    ],
+    interessed: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user",
+        },
+    ],
     startDate: {
         type: Date,
     },

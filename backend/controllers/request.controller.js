@@ -5,7 +5,7 @@ import Project from "../models/project.model.js";
 import { sendEmail } from "../email/sendEmail.js";
 
 export const fetchRequestOfUser = async (req, res) => {
-    
+
     try {
         const user = await User.findById(req.user._id).select("-password");
         if (!user) {
@@ -28,7 +28,7 @@ export const fetchRequestOfUser = async (req, res) => {
             requests
         })
     } catch (error) {
-        
+
     }
 }
 
@@ -36,7 +36,7 @@ export const createRequest = async (req, res) => {
     try {
         const { title, description, owner, project, completionTime, company} = req.body;
         const user = await User.findById(req.user._id).select("-password");
-        
+
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -62,11 +62,11 @@ export const createRequest = async (req, res) => {
         })
 
         await request.save();
-        
+
         projectRequest.request = request._id;
-        
+
         await projectRequest.save();
-        
+
 
         res.status(201).json({
             success: true,
@@ -80,7 +80,7 @@ export const createRequest = async (req, res) => {
             message: error
         })
     }
-      
+
 }
 
 export const acceptRequest = async (req, res) => {
@@ -91,7 +91,7 @@ export const acceptRequest = async (req, res) => {
             return res.status(500).json({
                 success: false,
                 message: "Request not found"
-            })    
+            })
         }
         const company = await User.findById(req.user._id);
         if (!company) {
@@ -105,7 +105,7 @@ export const acceptRequest = async (req, res) => {
             select: "username email"
         });
         // console.log(project.owner.username);
-        
+
         if (!project) {
             return res.status(500).json({
                 success: false,
@@ -124,7 +124,6 @@ export const acceptRequest = async (req, res) => {
         await project.save();
 
         sendEmail("1formartic@gmail.com", "acceptRequest", "", project.owner.username, "");
-        
 
         return res.status(200).json({
             success: true,
@@ -136,6 +135,36 @@ export const acceptRequest = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: error
+        })
+    }
+}
+
+export const acceptedRequest = async (req, res) => {
+    try {
+
+        const company = await User.findById(req.user._id);
+        if (!company) {
+            return res.status(400).json({
+                success:  false,
+                message: "User not found"
+            })
+        }
+
+        const requests = await Request.find({
+            $and: [
+                { "company": company._id },
+                { "status": "accepted" }
+            ]
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Requests accepted",
+            requests
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message,
         })
     }
 }
@@ -159,10 +188,162 @@ export const fetchRequestByProject = async (req, res) => {
             success: true,
             message: "Requests by projects",
             requests
-        })      
+        })
     } catch (error) {
         res.status(500).json({
             message: error.message
+        })
+    }
+}
+
+export const fetchRequestOfCompany = async (req, res) => {
+    // console.log(req.user)
+    try {
+        const company = await User.findById(req.user._id);
+        if(!company){
+            res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        // const requests = await Request.find({ company: req.user._id });
+        const requests = await Request.aggregate([
+            {
+                $match: {
+                    $and: [
+                        { company: req.user._id },
+                        {
+                            $or: [
+                                { status: "created" },
+                                {
+                                    $and: [
+                                        { status: "created" },
+                                        {interessed: {$in: [req.user._id]}}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+
+                }
+            }
+        ])
+
+
+         res.status(200).json({
+            success: true,
+             message: "Request of company",
+            requests
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error
+        })
+    }
+}
+
+export const likeAndDislikeRequest = async(req, res) => {
+    try {
+        const { requestId } = req.params;
+        const request = await Request.findById(requestId);
+        if (!request) {
+            return res.status(400).json({
+                success: false,
+                message: "Request not found"
+            })
+        }
+        const user = req.user;
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        const isLiked = request.likes.includes(user._id);
+
+        // console.log("IS LIKED 111 >>> ", isLiked, request);
+
+        if (isLiked) {
+            await Request.findByIdAndUpdate(requestId, {
+                $pull: {likes: user._id}
+            })
+            await User.findByIdAndUpdate(user._id, {
+                $pull: {likedRequest: request._id}
+            })
+        }
+        else {
+            await Request.findByIdAndUpdate(requestId, {
+                $push: {likes: user._id}
+            })
+            await User.findByIdAndUpdate(user._id, {
+                $push: {likedRequest: request._id}
+            })
+        }
+
+
+        return res.status(200).json({
+            success: true,
+            message: "Like/Unlike request successfully",
+            request,
+            user
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error
+        })
+    }
+}
+export const interessedAndUninteressedRequest = async(req, res) => {
+    try {
+        const { requestId } = req.params;
+        const request = await Request.findById(requestId);
+        if (!request) {
+            return res.status(400).json({
+                success: false,
+                message: "Request not found"
+            })
+        }
+        const user = req.user;
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        const isInteressed = request.interessed.includes(user._id);
+
+        if (isInteressed) {
+            await Request.findByIdAndUpdate(requestId, {
+                $pull: {interessed: user._id}
+            })
+            await User.findByIdAndUpdate(user._id, {
+                $pull: {interessedrequest: request._id}
+            })
+        }
+        else {
+             await Request.findByIdAndUpdate(requestId, {
+                $push: {interessed: user._id}
+            })
+            await User.findByIdAndUpdate(user._id, {
+                $push: {interessedrequest: request._id}
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Interessed/Uninteressed  request successfully",
+            request,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error
         })
     }
 }
