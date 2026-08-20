@@ -43,6 +43,10 @@ const requestSchema = mongoose.Schema({
         required: true,
         default: 0
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -52,6 +56,10 @@ const requestSchema = mongoose.Schema({
         type: String,
         enum: ['created', 'accepted', 'rejected', 'finished'],
         default: 'created'
+    },
+    declinedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {timestamps: true})
 

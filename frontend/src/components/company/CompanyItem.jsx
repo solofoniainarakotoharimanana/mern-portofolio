@@ -2,14 +2,15 @@ import React from 'react'
 import { SquareCheckBig } from "lucide-react"
 import toast from "react-hot-toast"
 
-const CompanyItem = ({ company, setIdCompanyToRequest }) => {
+const CompanyItem = ({ company, setIdCompanyToRequest, onClose }) => {
     const handleChooseCompany = (e) => {
         e.preventDefault();
         setIdCompanyToRequest(company._id)
         toast.success("Company choosed successfully")
+        onClose();
     }
     return (
-        <div className='flex justify-between'>
+        <div className='flex justify-between my-6'>
             <div className='flex flex-col'>
                 <h3 className='text-cyan-500'>Company name</h3>
                 <p className='text-thin font-md text-white/80'>{company.username}</p>

@@ -29,7 +29,9 @@ const UserPage = ({
         }
 
         getProjectById(projectIdToRequest);
-    }, [projectIdToRequest])
+    }, [projectIdToRequest]);
+
+    // console.log("TYPE >>> ", userComponent)
 
     return (
         <div>

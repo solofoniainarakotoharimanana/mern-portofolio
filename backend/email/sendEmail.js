@@ -5,7 +5,8 @@ import {
     WELCOME_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
-    ACCEPTED_REQUEST_TEMPLATE
+    ACCEPTED_REQUEST_TEMPLATE,
+    DECLINE_REQUEST_TEMPLATE
 } from "./emailTemplate.js";
 import dotenv from "dotenv"
 
@@ -70,6 +71,10 @@ export const sendEmail = (emailTo, type, verificationToken = '', username = '', 
     else if(type === "acceptRequest") {        
         templateEmail = ACCEPTED_REQUEST_TEMPLATE.replace('{username}', username);
         subject = "Accept request";
+    }
+     else if(type === "declineRequest") {        
+        templateEmail = DECLINE_REQUEST_TEMPLATE.replace('{username}', username);
+        subject = "Decline request";
     }
 
     let mail = MailGenerator.generate(response);

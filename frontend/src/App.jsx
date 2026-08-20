@@ -57,6 +57,7 @@ function App() {
   if (isCheckingAuth) {
     return <LoadingSpinner />
   }
+  // console.log("PAGE  TYPE ", userComponent)
 
   return (
     <div className='min-h-screen bg-linear-to-r from-[#351A30] via-[#0D0D17] to-[#0E0E18]'>

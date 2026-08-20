@@ -50,6 +50,9 @@ export const useRequestStore = create(
             const responses = await axios.get(`${API_URL}/accepted-request`);
             //console.log("RESPONSES >>> ", responses)
             set({ requestsAccepted: responses.data.requests });
+        },
+        declineRequest: async (requestId) => {
+            const responses = await axios.get(`${API_URL}/decline/${requestId}`);
         }
     })
 );

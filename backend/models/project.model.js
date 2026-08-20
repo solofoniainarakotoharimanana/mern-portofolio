@@ -31,7 +31,7 @@ const projectSchema = mongoose.Schema({
 	},
 	request: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "request",
+			ref: "Request",
 	},
     likes: [
 		{

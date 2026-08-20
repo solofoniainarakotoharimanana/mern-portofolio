@@ -13,7 +13,8 @@ const RequestItemOfCompany = ({ request }) => {
     const {
         likeAndDislikeRequest,
         interessedAndUninteressedRequest,
-        acceptRequest
+        acceptRequest,
+        declineRequest
     } = useRequestStore()
     const { user } = useAuthStore();
 
@@ -34,6 +35,13 @@ const RequestItemOfCompany = ({ request }) => {
         await acceptRequest(requestId);
         navigate('/company')
         toast.success("Accepting request successfully")
+    }
+
+    const handleDeclineRequest = async (requestId) => {
+        await declineRequest(requestId);
+
+        navigate('/company');
+        toast.success('You are decline a request successfully');
     }
 
     return (
@@ -76,7 +84,9 @@ const RequestItemOfCompany = ({ request }) => {
                                     <Check size={18} className='font-extra-bold self-center' />
                                     <span>Accept</span>
                                 </button>
-                                <button className='flex justify-center gap-1 
+                                <button
+                                    onClick={() => handleDeclineRequest(request._id)}
+                                    className='flex justify-center gap-1 
                                     align-center bg-rose-500 text-white 
                                     font-normal px-3 py-2 rounded-md  cursor-pointer'
                                 >

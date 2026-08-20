@@ -8,13 +8,18 @@ export const fetchRequestOfUser = async (req, res) => {
 
     try {
         const user = await User.findById(req.user._id).select("-password");
+        
         if (!user) {
             return res.status(400).json({
                 success: false,
                 message: "User not found"
             })
         }
-        const requests = await Request.find({ owner: user._id }).populate({
+        const requests = await Request.find({
+            $and: [
+                { "owner": user._id },
+                { "isActive": true }
+            ] }).populate({
             path: "project",
             select: "title description"
         }).populate({
@@ -222,7 +227,8 @@ export const fetchRequestOfCompany = async (req, res) => {
                                     ]
                                 }
                             ]
-                        }
+                        },
+                        { isActive: true }
                     ]
 
                 }
@@ -344,6 +350,50 @@ export const interessedAndUninteressedRequest = async(req, res) => {
         return res.status(500).json({
             success: false,
             message: error
+        })
+    }
+}
+
+export const declineRequest = async (req, res) => {
+    try {
+        const { requestId } = req.params;
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            res.status(500).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        
+        const request = await Request.findById(requestId);
+        if (!request) {
+            res.status(500).json({
+                success: false,
+                message: "Request not found"
+            })
+        }
+
+        const project = await Project.findOne({ request: request.id });
+
+        request.isActive = false;
+        request.declinedBy = user._id;
+
+        project.request = null;
+
+        await request.save();
+        await project.save();
+
+        sendEmail("1formartic@gmail.com", "declineRequest", "", project.owner.username, "");
+
+        return res.status(200).json({
+            success: true,
+            message: "Request declined successfully"
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
         })
     }
 }

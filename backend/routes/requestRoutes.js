@@ -8,7 +8,8 @@ import {
     fetchRequestOfCompany,
     likeAndDislikeRequest,
     interessedAndUninteressedRequest,
-    acceptedRequest
+    acceptedRequest,
+    declineRequest
 } from "../controllers/request.controller.js";
 
 
@@ -21,6 +22,7 @@ router.get('/accepted-request', protectRoute, acceptedRequest)
 router.get('/request-by-project/:projectId', protectRoute, fetchRequestByProject)
 router.get('/request-of-company', protectRoute, fetchRequestOfCompany)
 router.get('/like-dislike/:requestId', protectRoute, likeAndDislikeRequest)
-router.get('/interessed/:requestId', protectRoute, interessedAndUninteressedRequest)
+router.get('/interessed/:requestId', protectRoute, interessedAndUninteressedRequest);
+router.get('/decline/:requestId', protectRoute, declineRequest)
 
 export default router;

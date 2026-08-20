@@ -42,8 +42,8 @@ function Modal({ isOpen, children, onClose, dataType, data, title, setIdCompanyT
             </div>
             {/* START CONTENT */}
             <div className='p-6'>
-                {typeData === "project_detail" && <ProjectDetail project={data} />}
-                {typeData === "company_list" && <CompanyList
+                {typeData === "project_detail" && <ProjectDetail onClose={onClose} project={data} />}
+                {typeData === "company_list" && <CompanyList onClose={onClose}
                     setIdCompanyToRequest={setIdCompanyToRequest}
                     companies={data} />}
             </div>

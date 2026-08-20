@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 
 import { motion } from "framer-motion";
 import { formatDate } from "../../utils/date.js"
-import { Check, Eye, Send, X } from 'lucide-react';
+import { Check, Eye, List, Send, X } from 'lucide-react';
 
 import { cutTextTo20Words } from "../../utils/text.js"
 
-const RequestList = ({ setRequestId }) => {
+const RequestList = ({ setRequestId, setUserComponent }) => {
     const { requests, fetchRequestOfUser } = useRequestStore();
 
     useEffect(() => {
@@ -24,6 +24,14 @@ const RequestList = ({ setRequestId }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className=''>
+                <div className='mt-4 mb-8 ml-auto'>
+                    <button
+                        onClick={() => setUserComponent("project")}
+                        className="group relative overflow-hidden rounded-md bg-slate-500 px-6 py-3 font-semibold text-white cursor-pointer tracking-widest transition-all duration-300 flex space-x-2 hover:bg-slate-600 hover:text-white/70 mb-12">
+                        <List size={25} className='font-bold' />
+                        <span className="relative z-10">Project list</span>
+                    </button>
+                </div>
                 <h1 className='text-white text-center text-4xl tracking-widest mb-5'>My Requests</h1>
                 {requests && requests.map((r) => {
                     return <div

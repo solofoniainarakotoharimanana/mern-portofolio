@@ -15,7 +15,9 @@ const Request = ({
             {
                 // requestComponennt === "list" && requestId === 0 ?
                 userComponent !== "newRequest" ?
-                    <RequestList setRequestId={setRequestId} />
+                    <RequestList
+                        setUserComponent={setUserComponent}
+                        setRequestId={setRequestId} />
                     : <NewRequest
                         setUserComponent={setUserComponent}
                         projectIdToRequest={projectIdToRequest}
