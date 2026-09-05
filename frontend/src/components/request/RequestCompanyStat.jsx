@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { motion } from "framer-motion"
 
-const RequestCompanyStat = () => {
+const RequestCompanyStat = ({
+    requestsSuggestedToCompany,
+    requestsAcceptedByCompany,
+    requestsFinishedByCompany
+}) => {
+
+   
+    // console.log("FINISHED >>> ", requestsFinishedByCompany)
     return (
         <div className='mb-8'>
             <motion.div
@@ -16,7 +23,9 @@ const RequestCompanyStat = () => {
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-2xl mb-2 text-center 
-                                bg-linear-to-r from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent ">15 NEW REQUESTS </div>
+                                bg-linear-to-r from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent ">
+                                    {requestsSuggestedToCompany?.length > 0 ? <h1>{requestsSuggestedToCompany?.length} NEW REQUESTS</h1> : <h1>NO NEW REQUEST YET</h1> }
+                                </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>
@@ -34,7 +43,9 @@ const RequestCompanyStat = () => {
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-2xl mb-2 text-center 
-                                bg-linear-to-r from-rose-300 to-orange-500 bg-clip-text text-transparent ">15 REQUESTS ACCEPTED</div>
+                                bg-linear-to-r from-rose-300 to-orange-500 bg-clip-text text-transparent ">
+                                    {requestsAcceptedByCompany?.length > 0 ? <h1>{requestsAcceptedByCompany?.length} ACCEPTED REQUESTS</h1> : <h1>NO ACCEPTED REQUEST YET</h1> }
+                                </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>
@@ -48,11 +59,12 @@ const RequestCompanyStat = () => {
                     </div>
 
                     <div className="max-w-sm rounded overflow-hidden border-1 border-amber-50 shadow-xl">
-                        {/* <img className="w-full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-3xl mb-2 text-center 
-                                bg-linear-to-r from-teal-600 to-green-800 bg-clip-text text-transparent ">15 PROJECTS FINISHED</div>
+                                bg-linear-to-r from-teal-600 to-green-800 bg-clip-text text-transparent ">
+                                    {requestsFinishedByCompany?.length > 0 ? <h1>{requestsFinishedByCompany?.length} FINISHED REQUESTS</h1> : <h1>NO FINISHED REQUEST YET</h1> }
+                                </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>

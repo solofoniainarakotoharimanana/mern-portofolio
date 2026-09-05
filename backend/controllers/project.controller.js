@@ -1,9 +1,15 @@
 import User from "../models/user.model.js"
 import Project from "../models/project.model.js"
+
+import {uploadImageOnCloudinary} from "../config/cloudinary.js"
+
 export const createProject = async (req, res) => {
     try {
         const { title, description, category } = req.body;
-        console.log(req.user)
+        const fileDescription = req.file?.filename;
+        const fileDescriptionPath = req.file?.path
+        
+
         const owner = await User.findById(req.user._id);
         
         if (!owner) {
@@ -13,10 +19,21 @@ export const createProject = async (req, res) => {
             })
         }
 
+        //UPLOADING IMAGE ON CLOUDINARY
+        const {secure_url, public_id} = await uploadImageOnCloudinary(fileDescriptionPath, "projects")
+        if (!secure_url) {
+            return res.status(400).json({
+                success: false,
+                message: "Error when uploading image",
+                error: secure_url
+            })
+        }
+
         const newProject = new Project({
             title,
             description,
             category,
+            fileDescription: secure_url,
             owner:{
                 ...owner._doc,
                 password: undefined
@@ -78,15 +95,48 @@ export const fetchProjectById = async (req, res) => {
         }
 
         return res.status(200).json({
-                success: false,
-                message: "fetching project successfully",
-                project
-            })
+            success: true,
+            message: "Fetching project successfully",
+            project
+        })
 
     } catch (error) {
-         return res.status(500).json({
-                message: error.message
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+export const fetchProjectsByStatus = async(req, res) => {
+    try {
+        const userId = req.user._id;
+        const {status} = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
             })
+        }
+
+        const projects = await Project.find({
+            $and: [
+                {owner: user._id},
+                {status: status}
+            ]
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Project list",
+            projects
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
     }
 }
 

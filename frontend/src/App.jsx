@@ -15,7 +15,6 @@ import LoadingSpinner from './components/LoadingSpinner.jsx'
 import CompanyHomePage from './pages/home/CompanyHomePage.jsx'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx'
-// import NewRequest from './pages/request/NewRequest.jsx'
 import { useState } from 'react'
 
 // protect routes that require authentication
@@ -57,7 +56,6 @@ function App() {
   if (isCheckingAuth) {
     return <LoadingSpinner />
   }
-  // console.log("PAGE  TYPE ", userComponent)
 
   return (
     <div className='min-h-screen bg-linear-to-r from-[#351A30] via-[#0D0D17] to-[#0E0E18]'>

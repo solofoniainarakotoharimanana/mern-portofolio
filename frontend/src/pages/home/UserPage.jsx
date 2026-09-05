@@ -19,9 +19,27 @@ const UserPage = ({
     projectIdToRequest,
     setProjectIdToRequest }) => {
     const { user, logout } = useAuthStore();
-    const { projects, project, fetchProjectsOfUser, totalPages, fetchProjectById } = useProjectsStore()
+
+    const { 
+        projects, 
+        project, 
+        fetchProjectsOfUser, 
+        fetchProjectById, 
+        fetchProjectsByStatus, 
+        projectsCreated, 
+        projectsInProgressed, 
+        projectsFinished } = useProjectsStore()
+
+
     const [isProjectList, setIsProjectList] = useState(true);
     const [isNewRequest, setIsNewRequest] = useState(false);
+
+    useEffect(() => {
+        fetchProjectsByStatus('created');
+        fetchProjectsByStatus('inprogressed');
+        fetchProjectsByStatus('finished');
+        
+    }, [])
 
     useEffect(() => {
         const getProjectById = async (projectId) => {
@@ -31,12 +49,18 @@ const UserPage = ({
         getProjectById(projectIdToRequest);
     }, [projectIdToRequest]);
 
-    // console.log("TYPE >>> ", userComponent)
+    //console.log("CREATED >>> ", projectsCreated)
+    console.log("IN PROGRESSED 111 >>> ", projectsInProgressed)
 
+    // console.log("FINISHED >>> ", projectsFinished)
     return (
         <div>
             <Navbar user={user} handlelogout={logout} />
-            <UserStatProject />
+            <UserStatProject 
+                projectsCreated={projectsCreated} 
+                projectsInProgressed={projectsInProgressed} 
+                projectsFinished={projectsFinished} />
+                
             <div className='container mx-auto px-4 py-2 bg-gray-700 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-md shadow-lg mb-4'>
                 {
                     userComponent !== "project" ?
@@ -56,7 +80,6 @@ const UserPage = ({
                             setIsNewRequest={setIsNewRequest}
                             setProjectIdToRequest={setProjectIdToRequest}
                             setUserComponent={setUserComponent}
-                        // setProjectId={setProjectId}
                         />
                 }
 

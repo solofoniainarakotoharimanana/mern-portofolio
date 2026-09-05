@@ -88,13 +88,6 @@ const NewRequest = ({
 
     const handleClose = useCallback(() => setIsOpen(false), []);
 
-    // const handleSendRequest = async (e) => {
-    //     e.preventDefault();
-    //     await createRequest(title, description, project?.owner?._id, project?._id, completionTime, idCompanyToRequest);
-    //     toast.success("Request created successfully");
-    //     navigate("/login");
-    // }
-
     return (
         <div className=''>
             <h1 className='w-full text-center uppercase text-white/80 text-2xl py-4'>Project information</h1>
@@ -143,7 +136,7 @@ const NewRequest = ({
             <div className=''>
                 <h1 className='w-full text-center uppercase text-white/80 text-2xl py-4'>Request information</h1>
                 <form onSubmit={formik.handleSubmit}>
-                    <div className='grid xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-3'>
+                    <div className='grid lg:grid-cols-2 xl:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-6 '>
                         <input
                             placeholder='hidden'
                             type='hidden' name='company'
@@ -156,66 +149,74 @@ const NewRequest = ({
                         <input
                             placeholder='hidden'
                             type='hidden' name='owner' value={project?.owner?._id} onChange={() => setOwner(project?.owner?._id)} />
-                        {formik.errors.title && (
-                            <p className='text-red-500 mt-1 text-sm flex items-center'>
-                                <AlertCircle className='w-4 h-4 mr-2' />
-                                {formik.errors.title}
-                            </p>
-                        )}
-                        <Input
-                            icon={NotepadText}
-                            type="text"
-                            placeholder="Title"
-                            name="title"
-                            value={formik.values.title}
-                            onChange={formik.handleChange}
-                        />
-                        {formik.errors.completionTime && (
-                            <p className='text-red-500 mt-1 text-sm flex items-center'>
-                                <AlertCircle className='w-4 h-4 mr-2' />
-                                {formik.errors.completionTime}
-                            </p>
-                        )}
-                        <Input
-                            icon={Timer}
-                            type="text"
-                            placeholder="Completion time"
-                            name="completionTime"
-                            value={formik.values.completionTime}
-                            onChange={formik.handleChange}
-                        />
-                        {formik.errors.description && (
-                            <p className='text-red-500 mt-1 text-sm flex items-center'>
-                                <AlertCircle className='w-4 h-4 mr-2' />
-                                {formik.errors.description}
-                            </p>
-                        )}
-                        <Textarea
-                            icon={TextAlignJustifyIcon}
-                            name='description'
-                            value={formik.values.description}
-                            onChange={formik.handleChange}
-                            rows={5}
-                            cols={40}
-                            placeholder="Description..."
-                        />
-                        {!idCompanyToRequest && (
-                            <p className='text-red-500 mt-1 text-sm flex items-center'>
-                                <AlertCircle className={`w-4 h-4 mr-2 `} />
-                                {formik.errors.company}
-                            </p>
-                        )}
-
-                        <div className='flex flex-col'>
-                            <div className='flex space-x-3 text-gray-400 mb-2'>
-                                <Building2 />
-                                <p className=''>Choose Company</p>
+                        
+                        <div className='flex flex-col gap-3'>
+                            {formik.errors.title && (
+                                <p className='text-red-500 mt-1 text-sm flex items-center'>
+                                    <AlertCircle className='w-4 h-4 mr-2' />
+                                    {formik.errors.title}
+                                </p>
+                            )}
+                            <Input
+                                icon={NotepadText}
+                                type="text"
+                                placeholder="Title"
+                                name="title"
+                                value={formik.values.title}
+                                onChange={formik.handleChange}
+                            />
+                        </div>
+                        <div className='flex flex-col gap-3'>
+                            {formik.errors.completionTime && (
+                                <p className='text-red-500 mt-1 text-sm flex items-center'>
+                                    <AlertCircle className='w-4 h-4 mr-2' />
+                                    {formik.errors.completionTime}
+                                </p>
+                            )}
+                            <Input
+                                icon={Timer}
+                                type="text"
+                                placeholder="Completion time"
+                                name="completionTime"
+                                value={formik.values.completionTime}
+                                onChange={formik.handleChange}
+                            />
+                        </div>
+                        <div className='flex flex-col gap-3'>
+                            {formik.errors.description && (
+                                <p className='text-red-500 mt-1 text-sm flex items-center'>
+                                    <AlertCircle className='w-4 h-4 mr-2' />
+                                    {formik.errors.description}
+                                </p>
+                            )}
+                            <Textarea
+                                icon={TextAlignJustifyIcon}
+                                name='description'
+                                value={formik.values.description}
+                                onChange={formik.handleChange}
+                                rows={5}
+                                cols={40}
+                                placeholder="Description..."
+                            />
+                        </div>
+                        <div className='flex flex-col gap-3'>
+                            {idCompanyToRequest == "" && (
+                                <p className='text-red-500 mt-1 text-sm flex items-center'>
+                                    <AlertCircle className={`w-4 h-4 mr-2`} />
+                                    {formik.errors.company}
+                                </p>
+                            )}
+                            <div className='flex flex-col'>
+                                <div className='flex space-x-3 text-gray-400 mb-2'>
+                                    <Building2 />
+                                    <p className=''>Choose Company</p>
+                                </div>
+                                {idCompanyToRequest && <p className='text-white font-semibold mb-4 ml-9'>{company?.username}</p>}
+                                <button
+                                    onClick={(e) => handleOpenCompanyModal(e)}
+                                    className='text-white font-normal bg-blue-500 px-4 py-3 cursor-pointer rounded-sm w-fit'>
+                                    Click here to choose a company...</button>
                             </div>
-                            {idCompanyToRequest && <p className='text-white font-semibold mb-4 ml-9'>{company?.username}</p>}
-                            <button
-                                onClick={(e) => handleOpenCompanyModal(e)}
-                                className='text-white font-normal bg-blue-500 px-4 py-3 cursor-pointer rounded-sm w-fit'>
-                                Click here to choose a company...</button>
                         </div>
                     </div>
                     <button

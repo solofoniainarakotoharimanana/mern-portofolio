@@ -5,10 +5,10 @@ const ButtonListStatus = ({ setStatToFilter }) => {
         <div>
             <div className=' flex space-x-3 mt-4 mb-8 align-center'>
                 <button
-                    onClick={() => setStatToFilter("accepeted")}
+                    onClick={() => setStatToFilter("all")}
                     className="group relative overflow-hidden rounded-md bg-pink-400 px-6 py-3 font-semibold text-white hover:text-purple-600 cursor-pointer transition-all duration-300">
                     <span className="absolute inset-0 w-full h-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
-                    <span className="relative z-10 uppercase font-normal">Created</span>
+                    <span className="relative z-10 uppercase font-normal">All</span>
                 </button>
                 <button
                     onClick={() => setStatToFilter("accepted")}

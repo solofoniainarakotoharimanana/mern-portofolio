@@ -3,8 +3,18 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import ProjectDetail from '../../components/modal/ProjectDetail';
 import CompanyList from '../../components/company/CompanyList';
+import RequestDetail from '../../components/request/RequestDetail';
 
-function Modal({ isOpen, children, onClose, dataType, data, title, setIdCompanyToRequest }) {
+function Modal({ 
+    isOpen, 
+    children, 
+    onClose, 
+    dataType, 
+    data, 
+    title, 
+    setIdCompanyToRequest, 
+    setCurrentStatusInfo, 
+    currentStatusInfo }) {
 
     const [typeData, setTypeData] = useState('');
     useEffect(() => {
@@ -46,6 +56,11 @@ function Modal({ isOpen, children, onClose, dataType, data, title, setIdCompanyT
                 {typeData === "company_list" && <CompanyList onClose={onClose}
                     setIdCompanyToRequest={setIdCompanyToRequest}
                     companies={data} />}
+                {typeData === "request_detail" && <RequestDetail onClose={onClose}
+                    setIdCompanyToRequest={setIdCompanyToRequest}
+                    currentStatusInfo={currentStatusInfo}
+                    setCurrentStatusInfo={setCurrentStatusInfo}
+                    request={data} />}
             </div>
             {/* END CONTENT */}
         </div>

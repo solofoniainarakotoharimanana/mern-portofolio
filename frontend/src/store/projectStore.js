@@ -6,15 +6,18 @@ const API_URL = 'http://localhost:5000/api/projects';
 axios.defaults.withCredentials = true;
 
 export const useProjectsStore = create(
-    (set) => ({
+    (set, get) => ({
         project: null,
-        projects: null, 
+        projects: null,
+        projectsCreated: null, 
+        projectsInProgressed: null, 
+        projectsFinished: null, 
         // totalPages: 1,
         isLoading: false,
+        error: null,
         fetchProjectsOfUser: async () => {
             // const response = await axios.get(`${API_URL}/?page=${page}&limit=${limit}`);
             const response = await axios.get(`${API_URL}/`);
-            console.log("PROJECTS RESPONSE >>> ", response)
             set({projects: response.data.projects})
         },
         fetchProjectById: async (projectId) => {
@@ -29,6 +32,24 @@ export const useProjectsStore = create(
             set({isLoading: false})
 
             return response;
+        },
+        fetchProjectsByStatus: async (status) => {
+            console.log("STATUS PROJECT >>> ", status)
+            const response = await axios.get(`${API_URL}/status/${status}`);
+            // console.log("DATA STATUS  >>> ", response.data.projects)
+
+            if (status === "created") {
+                set({projectsCreated: response.data.projects})
+            }
+            else if (status === "inprogressed") {
+                set({projectsInProgressed: response.data.projects})
+            }
+            if (status === "finished") {
+                set({projectsFinished: response.data.projects})
+            }
+            
+
+            console.log("RESPONSES >>> ", response.data.projects) 
         }
     })
 )

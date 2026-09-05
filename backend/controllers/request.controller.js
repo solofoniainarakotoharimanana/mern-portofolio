@@ -158,8 +158,16 @@ export const acceptedRequest = async (req, res) => {
         const requests = await Request.find({
             $and: [
                 { "company": company._id },
-                { "status": "accepted" }
+                {
+                   $or: [
+                         { "status": "accepted" },
+                        { "status": "finished" }
+                    ] 
+                }
             ]
+        }).populate({
+            path: "owner",
+            select: "username"
         })
 
         return res.status(200).json({
@@ -226,6 +234,14 @@ export const fetchRequestOfCompany = async (req, res) => {
                                         {interessed: {$in: [req.user._id]}}
                                     ]
                                 }
+                                // {
+                                //     $and: [
+                                //         {
+                                //             status: "finished",
+                                //             company: req.user._id
+                                //         }
+                                //     ]
+                                // }
                             ]
                         },
                         { isActive: true }
@@ -390,6 +406,136 @@ export const declineRequest = async (req, res) => {
             message: "Request declined successfully"
         })
 
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const updateStatusInfo = async (req, res) => {
+    try {
+        const { requestId } = req.params;
+        const {statusInfo} = req.body
+        console.log(req.body)
+        const request = await Request.findById(requestId);
+        request.statusInfo = statusInfo;
+
+        await request.save();
+        res.status(200).json({
+            success: true,
+            message: "Request upated successfully"
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const fetchRequestById = async(req, res) => {
+    try {
+        const {requestId} = req.params;
+        const request = await Request.findById(requestId).populate({
+            path: "owner",
+            select: "username"
+        });
+        if (!request) {
+            res.status(400).json({
+                success: false,
+                message: "Request not found."
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Fetching request with success",
+            request
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const finishRequest = async (req, res) => {
+   try {
+        const {requestId} = req.params;
+        const request = await Request.findById(requestId).populate({
+            path: "owner",
+            select: "username"
+        });
+        if (!request) {
+            res.status(400).json({
+                success: false,
+                message: "Request not found."
+            })
+        }
+        //CHANGE FINISH PROJECT STATUS
+        const project = await Project.findById(request.project);
+        
+        if (!project) {
+            res.status(400).json({
+                success: false,
+                message: "Projejct not found."
+            })
+        }
+
+        project.status = "finished";
+
+        request.statusInfo = 100;
+        request.status = "finished";
+
+        await project.save();
+        await request.save();
+
+        sendEmail("1formartic@gmail.com", "finishRequest", "", request.owner.username, "");
+
+        return res.status(200).json({
+            success: true,
+            message: "Fetching request with success",
+            request
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+export const fetchRequestsByStatus = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const {status} = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+
+        const requests = await Request.find({
+            $and: [
+                {company: user._id},
+                {status: status}
+            ]
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Request by company via status",
+            requests
+        })
     } catch (error) {
         res.status(500).json({
             success: false,

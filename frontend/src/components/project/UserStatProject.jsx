@@ -2,7 +2,8 @@ import React from 'react'
 import { motion } from "framer-motion"
 
 
-const UserStatProject = () => {
+const UserStatProject = ({projectsCreated, projectsInProgressed, projectsFinished}) => {
+
     return (
         <div className='mb-8'>
             <motion.div
@@ -13,11 +14,12 @@ const UserStatProject = () => {
                 <h1 className='text-white text-center text-4xl tracking-widest mb-5'>STATISTICS PROJECTS</h1>
                 <div className='grid lg:grid-cols-3 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 sm:place-items-center gap-4 '>
                     <div className="max-w-sm rounded overflow-hidden border-1 border-amber-50 shadow-xl">
-                        {/* <img className="w-full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-2xl mb-2 text-center 
-                                bg-linear-to-r from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent ">15 PROJECTS CREATED</div>
+                                bg-linear-to-r from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent ">
+                                    {projectsCreated?.length > 0 ? <h1>{projectsCreated?.length} PROJECTS CREATED</h1> : <h1>YOU HAVE NOT PROJECTS CREATED</h1>}
+                                </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>
@@ -35,7 +37,9 @@ const UserStatProject = () => {
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-2xl mb-2 text-center 
-                                bg-linear-to-r from-rose-300 to-orange-500 bg-clip-text text-transparent ">15 PROJECTS IN PROGRESS</div>
+                                bg-linear-to-r from-rose-300 to-orange-500 bg-clip-text text-transparent ">
+                                    {projectsInProgressed?.length > 0 ? <h1>{projectsInProgressed?.length} PROJECTS IN PROGRESS</h1> : <h1>YOU HAVE NOT PROJECTS IN PROGRESS</h1>}
+                                </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>
@@ -49,11 +53,12 @@ const UserStatProject = () => {
                     </div>
 
                     <div className="max-w-sm rounded overflow-hidden border-1 border-amber-50 shadow-xl">
-                        {/* <img className="w-full" src="/img/card-top.jpg" alt="Sunset in the mountains"> */}
                         <div className="px-6 py-4">
                             <div
                                 className="font-bold text-3xl mb-2 text-center 
-                                bg-linear-to-r from-teal-600 to-green-800 bg-clip-text text-transparent ">15 PROJECTS FINISHED</div>
+                                bg-linear-to-r from-teal-600 to-green-800 bg-clip-text text-transparent ">
+                                 {projectsFinished?.length > 0 ? <h1>{projectsFinished?.length} PROJECTS FINISHED</h1> : <h1>YOU HAVE NOT PROJECTS FINISHED</h1>}
+                            </div>
                             <p className="text-gray-200 text-sm font-thin">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
                             </p>

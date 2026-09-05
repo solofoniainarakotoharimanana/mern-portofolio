@@ -21,6 +21,7 @@
   "homepage": "https://github.com/solofoniainarakotoharimanana/mern-portofolio#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "crypto": "^1.0.1",
@@ -29,7 +30,10 @@
     "jsonwebtoken": "^9.0.3",
     "mailgen": "^2.0.34",
     "mongoose": "^9.8.0",
-    "nodemailer": "^9.0.3"
+    "multer": "^2.3.0",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^9.0.3",
+    "uuid": "^14.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

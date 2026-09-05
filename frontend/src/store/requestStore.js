@@ -8,6 +8,9 @@ export const useRequestStore = create(
         request: null,
         requests: null,
         requestsAccepted: null,
+        requestsSuggestedToCompany: null,
+        requestsAcceptedByCompany: null,
+        requestsFinishedByCompany: null,
         fetchRequestOfUser: async () => {
             const results = await axios.get(`${API_URL}/`)
             set({ requests: results.data.requests })
@@ -53,6 +56,35 @@ export const useRequestStore = create(
         },
         declineRequest: async (requestId) => {
             const responses = await axios.get(`${API_URL}/decline/${requestId}`);
+        },
+        updateStatusInfo: async (requestId, statusInfo) => {
+            const responses = await axios.post(`${API_URL}/update-status-info/${requestId}`, {statusInfo});
+
+            return responses.data.request;
+        },
+        fetchRequestById: async (requestId) => {
+            const responses = await axios.get(`${API_URL}/${requestId}`)
+
+            return responses.data.request;
+        },
+        finishRequest: async (requestId) => {
+            const responses = await axios.get(`${API_URL}/finish/${requestId}`);
+
+            return responses.data.request;
+        },
+        fetchRequestsByStatus: async (status) => {
+            const response = await axios.get(`${API_URL}/status/${status}`);
+
+            if (status === "created") {
+                set({requestsSuggestedToCompany: response.data.requests})
+            }
+            else if (status === "accepted") {
+                set({requestsAcceptedByCompany: response.data.requests})
+            }
+            if (status === "finished") {
+                set({requestsFinishedByCompany: response.data.requests})
+            }
+            
         }
     })
 );
