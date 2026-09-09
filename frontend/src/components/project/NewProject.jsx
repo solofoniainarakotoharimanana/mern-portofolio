@@ -17,6 +17,16 @@ const NewProject = () => {
     const navigate = useNavigate();
     const [category, setCategory] = useState("Volvo");
 
+    const [file, setFile] = useState(null);
+
+    // const handleChangeFile = (e) => {
+    //     // Check if a file was actually selected
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         const selectedFile = e.target.files[0];
+    //         setFile(selectedFile);
+    //     }
+    // }
+
 
     const formik = useFormik({
         initialValues: {
@@ -26,7 +36,15 @@ const NewProject = () => {
             fileDescription: ''
         },
         onSubmit: async (values) => {
-            const response = await createProject(values.title, values.description, values.category);
+            const response = await createProject(values.title, values.description, values.category, values.fileDescription);
+
+            // const formData = new FormData();
+            // formData.append('title', values.title)
+            // formData.append('description', values.description)
+            // formData.append('category', values.category)
+            // file && formData.append('fileDescription', values.fileDescription)
+            // const response = await createProject(formData);
+            
             toast.success("Project created successfully");
             navigate('/login');
         },
@@ -151,11 +169,9 @@ const NewProject = () => {
                             <div className='flex items-center space-x-4'>
                                 <div className='w-16 h-16 rounded-full flex items-center justify-center overflow-hidden '>
                                     {
-                                        formik.fileDescription ?
+                                        file?.type.startsWith('image/') ? 
                                             (<img
-                                                name=""
-                                                // src={formState.fileDescription}
-                                                src=''
+                                                src={URL.createObjectURL(file)}
                                                 alt='Avatar Preview'
                                                 className='w-full h-full object-cover'
                                             />) : (
@@ -166,9 +182,10 @@ const NewProject = () => {
                                 <div className='flex-1'>
                                     <input
                                         type='file'
+                                        name="fileDescription"
                                         id='avatar'
-                                        accept='.jpg,.png,.jepg, .pdf'
-                                        // onChange={handleChangeAvatar}
+                                        accept='.jpg,.png,.jpeg,.pdf'
+                                        onChange={(e) => setFile(e.target.files[0])}
                                         className='hidden'
                                     />
                                     <label

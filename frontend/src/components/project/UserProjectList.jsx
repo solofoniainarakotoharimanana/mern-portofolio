@@ -14,6 +14,7 @@ import { useRequestStore } from "../../store/requestStore.js"
 
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
+import Pagination from './Pagination.jsx';
 
 const UserProjectList = ({
     project,
@@ -31,11 +32,17 @@ const UserProjectList = ({
     const navigate = useNavigate();
 
     const { categories, fetchCategories } = useCategoryStore()
-    // const [selectedCategory, setSelectedCategory] = useState('');
     const [projectId, setProjectId] = useState(0)
     const [catToFilter, setCatToFilter] = useState('');
 
     const [projectList, setProjectList] = useState([]);
+
+    //PAGINATION
+    const [currentPage, setCurrentPage] = useState(1);
+    const [projectsPerPage, setProjectsPerPage] = useState(4);
+    const lastProjectIndex = currentPage * projectsPerPage;
+    const firstProjectIndex = lastProjectIndex - projectsPerPage;
+    const [currentProjects, setCurrentProjects] = useState([]);
 
     //FILTER PROJECTS BY CATEGORY
     const filterByCategory = projects?.filter((p) => {
@@ -47,6 +54,10 @@ const UserProjectList = ({
         }
 
     })
+
+    useEffect(() => {
+        setCurrentProjects(filterByCategory?.slice(firstProjectIndex, lastProjectIndex))
+    }, [catToFilter, currentPage, projects])        
 
     const handleClose = useCallback(() => setIsOpen(false), []);
 
@@ -73,7 +84,7 @@ const UserProjectList = ({
         setUserComponent("newRequest")
         setProjectIdToRequest(projectId)
         setIsNewRequest(true)
-    }
+    }    
 
     return (
         <div className='mb-8'>
@@ -98,14 +109,14 @@ const UserProjectList = ({
                                 return <div className='mt-4 mb-8 align-center' key={c._id}>
                                     <button
                                         onClick={() => setCatToFilter(c.name)}
-                                        className="group relative overflow-hidden rounded-md bg-pink-400 px-6 py-3 font-semibold text-white hover:text-purple-600 cursor-pointer transition-all duration-300">
+                                        className={`group relative overflow-hidden rounded-md bg-pink-400 px-6 py-3 font-semibold text-white hover:text-purple-600 cursor-pointer transition-all duration-300 ${catToFilter == c.name ? 'bg-purple-600 ' : '' }`}>
                                         <span className="absolute inset-0 w-full h-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100"></span>
                                         <span className="relative z-10">{c.name}</span>
                                     </button>
                                 </div>
                             })}
                         </div>
-                        {filterByCategory && filterByCategory.map((p) => {
+                        {currentProjects && currentProjects.map((p) => {
                             return <div
                                 key={p._id}
                                 className='w-full pb-4 border-b border-b-amber-50 flex space-x-6 pt-4 mb-4'>
@@ -159,7 +170,12 @@ const UserProjectList = ({
                 ) : 
                     <h1 className='text-4xl font-bold text-blue-400 uppercase text-center'>You have not projects.</h1>
                 }
-                
+                <Pagination 
+                    totalProjects={filterByCategory?.length} 
+                    projectsPerPage={projectsPerPage}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                     />
             </motion.div>
             <Modal
                 title="Project detail"
@@ -169,6 +185,7 @@ const UserProjectList = ({
                 onClose={handleClose}>
                 <h1>Modal is opening</h1>
             </Modal>
+            
         </div>
     )
 }

@@ -27,16 +27,21 @@ export const useProjectsStore = create(
             return response.data.project;
         },
         createProject: async (title, description, category) => {
+        // createProject: async (formData) => {
             set({isLoading: true})
             const response = await axios.post(`${API_URL}/create`, { title, description, category })
+            
+            // const response = await axios.post(`${API_URL}/create`, formData, {
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
             set({isLoading: false})
 
             return response;
         },
         fetchProjectsByStatus: async (status) => {
-            console.log("STATUS PROJECT >>> ", status)
             const response = await axios.get(`${API_URL}/status/${status}`);
-            // console.log("DATA STATUS  >>> ", response.data.projects)
 
             if (status === "created") {
                 set({projectsCreated: response.data.projects})
@@ -47,9 +52,6 @@ export const useProjectsStore = create(
             if (status === "finished") {
                 set({projectsFinished: response.data.projects})
             }
-            
-
-            console.log("RESPONSES >>> ", response.data.projects) 
-        }
+       }
     })
 )

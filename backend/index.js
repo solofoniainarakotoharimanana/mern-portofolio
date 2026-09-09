@@ -23,6 +23,7 @@ app.use(cors({
     credentials: true
 }))
 app.use(express.json());//ALLOWS US TO PARSE INCOING REQUEST WITH JSON PAYLOADS(GET DATA JSON FROM FORM)
+app.use(express.urlencoded({extended: true}))
 app.use(cookieParser());//ALLOWS TO PARSE THE INCOMING COOKIES
 
 app.use("/api/auth", authRoutes);

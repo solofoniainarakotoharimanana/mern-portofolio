@@ -1,17 +1,13 @@
 import User from "../models/user.model.js"
 import Project from "../models/project.model.js"
 
-import {uploadImageOnCloudinary} from "../config/cloudinary.js"
 
 export const createProject = async (req, res) => {
     try {
         const { title, description, category } = req.body;
-        const fileDescription = req.file?.filename;
-        const fileDescriptionPath = req.file?.path
         
-
         const owner = await User.findById(req.user._id);
-        
+
         if (!owner) {
             return res.status(400).json({
                 success: false,
@@ -19,35 +15,25 @@ export const createProject = async (req, res) => {
             })
         }
 
-        //UPLOADING IMAGE ON CLOUDINARY
-        const {secure_url, public_id} = await uploadImageOnCloudinary(fileDescriptionPath, "projects")
-        if (!secure_url) {
-            return res.status(400).json({
-                success: false,
-                message: "Error when uploading image",
-                error: secure_url
-            })
-        }
-
         const newProject = new Project({
             title,
             description,
             category,
-            fileDescription: secure_url,
+            fileDescription: "",
             owner:{
                 ...owner._doc,
                 password: undefined
-            },  
+            },
         })
 
         await newProject.save();
-        
+
         res.status(201).json({
             success: true,
             message: "Project created successfully",
             newProject
         })
-        
+
     } catch (error) {
         return res.status(500).json({
             success: false,
@@ -65,11 +51,11 @@ export const fetchProjectsOfUsers = async (req, res) => {
         // const projects = await Project.find().skip(skip).limit(limit).populate('category');
         // const total = await Project.countDocuments();
         const projects = await Project.find({ owner: req.user._id }).sort({createdAt: -1}).populate('category');
-        
+
         res.json({
             projects,
             // pagetotalPages: Math.ceil(total / limit),
-            // currentPage: 
+            // currentPage:
         });
     } catch (err) {
         res.status(500).json({ message: err.message });

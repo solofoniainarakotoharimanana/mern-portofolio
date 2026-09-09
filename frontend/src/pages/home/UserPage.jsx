@@ -49,10 +49,6 @@ const UserPage = ({
         getProjectById(projectIdToRequest);
     }, [projectIdToRequest]);
 
-    //console.log("CREATED >>> ", projectsCreated)
-    console.log("IN PROGRESSED 111 >>> ", projectsInProgressed)
-
-    // console.log("FINISHED >>> ", projectsFinished)
     return (
         <div>
             <Navbar user={user} handlelogout={logout} />
