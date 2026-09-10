@@ -15,6 +15,7 @@ import { useRequestStore } from "../../store/requestStore.js"
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import Pagination from './Pagination.jsx';
+import { usePagination } from '../../hooks/usePagination.jsx';
 
 const UserProjectList = ({
     project,
@@ -38,11 +39,20 @@ const UserProjectList = ({
     const [projectList, setProjectList] = useState([]);
 
     //PAGINATION
-    const [currentPage, setCurrentPage] = useState(1);
-    const [projectsPerPage, setProjectsPerPage] = useState(4);
-    const lastProjectIndex = currentPage * projectsPerPage;
-    const firstProjectIndex = lastProjectIndex - projectsPerPage;
-    const [currentProjects, setCurrentProjects] = useState([]);
+    const {
+        currentPage,
+        setCurrentPage, 
+        dataPerPage,
+        lastDataIndex,
+        firstDataIndex,
+        currentData,
+        setCurrentData
+    } = usePagination(1, 4);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [projectsPerPage, setProjectsPerPage] = useState(4);
+    // const lastProjectIndex = currentPage * projectsPerPage;
+    // const firstProjectIndex = lastProjectIndex - projectsPerPage;
+    // const [currentProjects, setCurrentProjects] = useState([]);
 
     //FILTER PROJECTS BY CATEGORY
     const filterByCategory = projects?.filter((p) => {
@@ -50,13 +60,17 @@ const UserProjectList = ({
             return projects;
         }
         else {
+            console.log("CAT SELECTED >>> ",catToFilter)
+            console.log("PROJECTS RESULTS >>> ",p.category.name.toLocaleLowerCase() === catToFilter.toLocaleLowerCase())
+
             return p.category.name.toLocaleLowerCase() === catToFilter.toLocaleLowerCase()
         }
 
     })
 
     useEffect(() => {
-        setCurrentProjects(filterByCategory?.slice(firstProjectIndex, lastProjectIndex))
+        // setCurrentProjects(filterByCategory?.slice(firstProjectIndex, lastProjectIndex))
+        setCurrentData(filterByCategory?.slice(firstDataIndex, lastDataIndex))
     }, [catToFilter, currentPage, projects])        
 
     const handleClose = useCallback(() => setIsOpen(false), []);
@@ -116,7 +130,7 @@ const UserProjectList = ({
                                 </div>
                             })}
                         </div>
-                        {currentProjects && currentProjects.map((p) => {
+                        {currentData && currentData.map((p) => {
                             return <div
                                 key={p._id}
                                 className='w-full pb-4 border-b border-b-amber-50 flex space-x-6 pt-4 mb-4'>
@@ -171,11 +185,12 @@ const UserProjectList = ({
                     <h1 className='text-4xl font-bold text-blue-400 uppercase text-center'>You have not projects.</h1>
                 }
                 <Pagination 
-                    totalProjects={filterByCategory?.length} 
-                    projectsPerPage={projectsPerPage}
+                    totalDatas={filterByCategory?.length} 
+                    dataPerPage={dataPerPage}
+                    // projectsPerPage={projectsPerPage}
                     setCurrentPage={setCurrentPage}
                     currentPage={currentPage}
-                     />
+                />
             </motion.div>
             <Modal
                 title="Project detail"

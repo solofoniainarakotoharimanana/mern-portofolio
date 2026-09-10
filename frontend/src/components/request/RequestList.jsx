@@ -10,6 +10,8 @@ import { Check, Eye, List, Send, X } from 'lucide-react';
 import { cutTextTo20Words } from "../../utils/text.js"
 
 import {formatDate} from "../../utils/date";
+import { usePagination } from '../../hooks/usePagination.jsx';
+import Pagination from '../project/Pagination.jsx';
 
 const RequestList = ({ setRequestId, setUserComponent }) => {
     const { requests, fetchRequestOfUser } = useRequestStore();
@@ -18,7 +20,21 @@ const RequestList = ({ setRequestId, setUserComponent }) => {
         fetchRequestOfUser();
     }, [])
 
-    // console.log("MY REQUEST >>> ", requests)
+    //PAGINATION
+    const {
+        currentPage,
+        setCurrentPage, 
+        dataPerPage,
+        lastDataIndex,
+        firstDataIndex,
+        currentData,
+        setCurrentData
+    } = usePagination(1, 2);
+
+    useEffect(() => {
+        setCurrentData(requests?.slice(firstDataIndex, lastDataIndex))
+    }, [currentPage, requests])        
+
     return (
         <div className='mb-8'>
             <motion.div
@@ -38,7 +54,7 @@ const RequestList = ({ setRequestId, setUserComponent }) => {
                     (
                         <>
                         <h1 className='text-white text-center text-4xl tracking-widest mb-5'>My Requests</h1>
-                            {requests && requests.map((r) => {
+                            {currentData && currentData?.map((r) => {
                                 return <div
                                     key={r._id}
                                     className='w-full pb-4 border-b border-b-amber-50 flex space-x-6 pt-4 mb-4'>
@@ -98,7 +114,13 @@ const RequestList = ({ setRequestId, setUserComponent }) => {
                 : 
                     <h1 className='text-blue-400 text-4xl font-bold uppercase text-center'>You have not request yet.</h1>
                 }
-                
+                <Pagination 
+                    totalDatas={requests?.length} 
+                    dataPerPage={dataPerPage}
+                    // projectsPerPage={projectsPerPage}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                />
             </motion.div>
             {/* <Modal
                 title="Project detail"

@@ -1,14 +1,16 @@
 import React from 'react'
 
 const Pagination = ({
-    totalProjects, 
-    projectsPerPage,
+    totalDatas, 
+    // projectsPerPage,
+    dataPerPage,
     setCurrentPage,
     currentPage
 }) => {
     let pages = [];
     
-    for (let i = 1; i <= Math.ceil(totalProjects / projectsPerPage); i++) {
+    // for (let i = 1; i <= Math.ceil(totalProjects / projectsPerPage); i++) {
+    for (let i = 1; i <= Math.ceil(totalDatas / dataPerPage); i++) {
         pages.push(i);
     }
     return (

@@ -10,9 +10,9 @@ const notificationSchema = mongoose.Schema({
         required: true,
         default: false
     },
-    project: {
+    request: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Project",
+        ref: "Request",
         required: true
     },
     sender: {

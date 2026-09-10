@@ -3,6 +3,7 @@ import Request from "../models/request.model.js";
 import Project from "../models/project.model.js";
 
 import { sendEmail } from "../email/sendEmail.js";
+import NotificationModel from "../models/notification.model.js";
 
 export const fetchRequestOfUser = async (req, res) => {
 
@@ -49,7 +50,7 @@ export const createRequest = async (req, res) => {
             })
         }
 
-        const projectRequest = await Project.findById(project);
+        const projectRequest = await Project.findById(project).populate('owner', 'username');
         if (!projectRequest) {
             return res.status(400).json({
                 success: false,
@@ -71,6 +72,16 @@ export const createRequest = async (req, res) => {
         projectRequest.request = request._id;
 
         await projectRequest.save();
+
+        //CREATE NOTIFICATION 
+        const notification = new NotificationModel({
+            description: `You have a new request from ${projectRequest.owner.username} `,
+            request,
+            sender: request.owner,
+            receiver: user._id
+        });
+
+        await notification.save();
 
 
         res.status(201).json({
@@ -234,14 +245,6 @@ export const fetchRequestOfCompany = async (req, res) => {
                                         {interessed: {$in: [req.user._id]}}
                                     ]
                                 }
-                                // {
-                                //     $and: [
-                                //         {
-                                //             status: "finished",
-                                //             company: req.user._id
-                                //         }
-                                //     ]
-                                // }
                             ]
                         },
                         { isActive: true }
